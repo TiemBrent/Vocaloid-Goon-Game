@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="white-header"><h1>Vocaloid Goon Game</h1></header>
+<nav>
+  <a href="index.html">Home</a>
+  <!-- <a href="viewer.html">Viewer</a> --> <!-- Removed -->
+  <a href="viewer_locked.html">Index</a>
+  <a href="random.html">Roll</a>
+  <a href="favorites.html">Favorites</a>
+  <a href="click.html">Mikoins</a>
+</nav>
+<h1>Favorites</h1>
+<div id="viewer"></div>
+<script src="scripts/images.js"></script>
+<script src="scripts/common.js"></script>
+<script>
+const viewer = document.getElementById('viewer');
+const favorites = getFavorites();
+const discovered = getDiscovered();
+// Only show favorites that are in the images array AND discovered
+favorites
+  .filter(img => images.includes(img) && discovered.includes(img))
+  .forEach(img => {
+    const el = document.createElement('img');
+    el.src = `images/${img}`;
+    el.className = 'image';
+    el.style.cursor = 'pointer';
+    el.onclick = () => showFullscreen(`images/${img}`);
+    viewer.appendChild(el);
+  });
+</script>
+</body>
+</html>

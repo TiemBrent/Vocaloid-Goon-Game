@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="white-header"><h1>Vocaloid Goon Game</h1></header>
+<nav>
+  <a href="index.html">Home</a>
+  <!-- <a href="viewer.html">Viewer</a> --> <!-- Removed -->
+  <a href="viewer_locked.html">Index</a>
+  <a href="random.html">Roll</a>
+  <a href="favorites.html">Favorites</a>
+  <a href="click.html">Mikoins</a>
+</nav>
+<h1>Index</h1>
+<div id="viewer"></div>
+<script src="scripts/images.js"></script>
+<script src="scripts/common.js"></script>
+<script>
+function updateDiscoveredViewer() {
+  const discovered = JSON.parse(localStorage.getItem('discovered') || '[]');
+  const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+  const viewer = document.getElementById('viewer');
+  viewer.innerHTML = '';
+  // Show discovered images at the top, then the rest
+  const orderedImages = [...discovered, ...images.filter(img => !discovered.includes(img))];
+  orderedImages.forEach(img => {
+    const container = document.createElement('div');
+    container.className = 'image-container';
+    const el = document.createElement('img');
+    el.src = `images/${img}`;
+    el.className = 'image';
+    if (!discovered.includes(img)) {
+      el.classList.add('locked');
+      container.appendChild(el);
+
+      // Add transparent overlay to block interaction
+      const overlay = document.createElement('div');
+      overlay.style.position = 'absolute';
+      overlay.style.top = 0;
+      overlay.style.left = 0;
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.cursor = 'not-allowed';
+      overlay.style.background = 'transparent';
+      overlay.title = "Locked";
+      overlay.onmousedown = e => e.preventDefault();
+      overlay.ondragstart = e => e.preventDefault();
+      overlay.onclick = e => e.stopPropagation();
+      container.appendChild(overlay);
+    } else {
+      // Only discovered images can be fullscreened
+      el.style.cursor = 'pointer';
+      el.onclick = () => showFullscreen(`images/${img}`);
+      container.appendChild(el);
+
+      // Add favorite/unfavorite button for discovered images
+      const favBtn = document.createElement('button');
+      const isFav = favorites.includes(img);
+      favBtn.className = 'favorite-btn' + (isFav ? ' favorited' : '');
+      favBtn.title = isFav ? 'Unfavorite' : 'Add to Favorites';
+      favBtn.innerHTML = isFav ? '★' : '☆';
+      favBtn.onclick = (e) => {
+        e.stopPropagation();
+        let favs = JSON.parse(localStorage.getItem('favorites') || '[]');
+        if (favs.includes(img)) {
+          favs = favs.filter(f => f !== img);
+          favBtn.classList.remove('favorited');
+          favBtn.innerHTML = '☆';
+          favBtn.title = 'Add to Favorites';
+        } else {
+          favs.push(img);
+          favBtn.classList.add('favorited');
+          favBtn.innerHTML = '★';
+          favBtn.title = 'Unfavorite';
+        }
+        localStorage.setItem('favorites', JSON.stringify(favs));
+      };
+      container.appendChild(favBtn);
+    }
+    viewer.appendChild(container);
+  });
+}
+window.updateDiscoveredViewer = updateDiscoveredViewer;
+updateDiscoveredViewer();
+</script>
+</body>
+</html>
