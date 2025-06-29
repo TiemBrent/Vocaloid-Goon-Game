@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Vocaloid Goon Game - Favorites</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    #menuIcon {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      z-index: 1001;
+      background: none;
+      border: none;
+      outline: none;
+    }
+    #menuIcon span, #menuIcon span:before, #menuIcon span:after {
+      display: block;
+      position: absolute;
+      width: 28px;
+      height: 4px;
+      background: #39c5bb;
+      border-radius: 2px;
+      transition: 0.3s;
+    }
+    #menuIcon span {
+      top: 16px;
+      left: 4px;
+    }
+    #menuIcon span:before {
+      content: '';
+      top: -10px;
+      left: 0;
+      position: absolute;
+    }
+    #menuIcon span:after {
+      content: '';
+      top: 10px;
+      left: 0;
+      position: absolute;
+    }
+    #statsMenuOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+    #statsMenu {
+      position: fixed;
+      top: 80px; /* was 60px */
+      right: 40px;
+      background: #fff;
+      color: #222;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+      padding: 24px 32px;
+      min-width: 260px;
+      z-index: 1001;
+      font-size: 1rem;
+      display: none;
+    }
+    #statsMenu h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #39c5bb;
+      font-size: 1.15em;
+    }
+    #statsMenuClose {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 1.3em;
+      color: #888;
+      cursor: pointer;
+    }
+    #questMenuIcon {
+      position: absolute;
+      top: 20px;
+      right: 80px;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      z-index: 1001;
+      background: none;
+      border: none;
+      outline: none;
+    }
+    #questMenuIcon svg {
+      width: 100%;
+      height: 100%;
+    }
+    #questMenuOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.3); /* was 0.7, now 0.3 */
+      z-index: 1000;
+    }
+    #questMenu {
+      position: fixed;
+      top: 80px; /* was 60px */
+      right: 40px;
+      background: #fff;
+      color: #222;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+      padding: 24px 32px;
+      min-width: 260px;
+      z-index: 1001;
+      font-size: 1rem;
+      display: none;
+    }
+    #questMenu h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      color: #39c5bb;
+      font-size: 1.15em;
+    }
+    #questMenuClose {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 1.3em;
+      color: #888;
+      cursor: pointer;
+    }
+    @media (max-width: 600px) {
+      #statsMenu {
+        right: 10px;
+        left: 10px;
+        min-width: unset;
+        padding: 18px 8px;
+      }
+      #menuIcon {
+        right: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+<header class="white-header"><h1>Vocaloid Goon Game</h1></header>
+<button id="menuIcon" aria-label="Menu">
+  <span></span>
+</button>
+<button id="questMenuIcon" aria-label="Daily Quests" style="position:absolute;top:20px;right:80px;width:36px;height:36px;z-index:1001;background:none;border:none;outline:none;">
+  <svg width="36" height="36" viewBox="0 0 36 36">
+    <rect x="2" y="2" width="32" height="32" rx="8" fill="#fff"/>
+    <rect x="8" y="11" width="20" height="3.5" rx="1.5" fill="#39c5bb"/>
+    <rect x="8" y="16.5" width="20" height="3.5" rx="1.5" fill="#39c5bb"/>
+    <rect x="8" y="22" width="20" height="3.5" rx="1.5" fill="#39c5bb"/>
+  </svg>
+</button>
+<div id="statsMenuOverlay"></div>
+<div id="statsMenu">
+  <button id="statsMenuClose" title="Close">&times;</button>
+  <h3>Stats</h3>
+  <ul style="list-style:none;padding:0;margin:0;">
+    <li>Clicks: <span id="statClicks">0</span></li>
+    <li>Rolls: <span id="statRandoms">0</span></li>
+    <li>Unlocked images: <span id="statUnlocked">0</span></li>
+    <li>Locked images: <span id="statLocked">0</span></li>
+    <li>Total images: <span id="statTotal">0</span></li>
+    <li>Playtime: <span id="statTime">0d 0h 0m 0s</span></li>
+  </ul>
+</div>
+<div id="questMenuOverlay"></div>
+<div id="questMenu">
+  <button id="questMenuClose" title="Close">&times;</button>
+  <h3>Daily Quests</h3>
+  <ul id="questList" style="list-style:none;padding:0;margin:0;"></ul>
+</div>
+<nav>
+  <a href="index.html">Home</a>
+  <a href="viewer_locked.html">Index</a>
+  <a href="random.html">Roll</a>
+  <a href="favorites.html">Favorites</a>
+  <a href="click.html">Mi-Coins</a>
+</nav>
+<h1>Favorites</h1>
+<div id="viewer"></div>
+<script src="scripts/images.js"></script>
+<script src="scripts/quests.js"></script>
+<script src="scripts/common.js"></script>
+<script src="scripts/global-menu.js"></script>
+<script src="scripts/favorites.js"></script>
+</body>
+</html>
